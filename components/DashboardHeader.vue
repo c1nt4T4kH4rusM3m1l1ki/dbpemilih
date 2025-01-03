@@ -20,9 +20,21 @@
           </div>
         </label>
         <ul tabindex="0" class="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-auto">
-          <NuxtLink to="/login">LogOut</NuxtLink>
+          <NuxtLink to="/login" @click="handlerLogout">LogOut</NuxtLink>
         </ul>
       </div>
     </div>
   </header>
 </template>
+
+<script setup>
+
+// logout sistem
+const {isAuthenticated, logout}= useAuth()
+
+const handlerLogout = ()=>{
+  isAuthenticated.value=false
+  logout()
+}
+
+</script>

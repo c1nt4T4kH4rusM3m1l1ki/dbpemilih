@@ -5,7 +5,7 @@
       
       <!-- DaisyUI Button Examples -->
       <div class="space-x-2 mb-4">
-        <button class="btn btn-primary">Primary Button</button>
+        <NuxtLink to='/login' class="btn btn-ghosh">Login</NuxtLink>
         <button class="btn btn-secondary">Secondary Button</button>
         <button class="btn btn-accent">Accent Button</button>
       </div>
@@ -24,4 +24,12 @@
     </div>
     </div>
 </template>
+
+<script setup>
+definePageMeta({
+  middleware:['auth']
+})
+
+
+</script>
 
