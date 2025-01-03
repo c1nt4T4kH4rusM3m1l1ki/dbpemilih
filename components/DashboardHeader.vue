@@ -16,7 +16,7 @@
       <div class="dropdown dropdown-end">
         <label tabindex="0" class="btn btn-ghost btn-circle avatar">
           <div class="w-10 rounded-full">
-            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=admin" alt="avatar" />
+            <Icon name="ic:round-log-out" class="text-red-500 font-bold text-2xl m-2" />
           </div>
         </label>
         <ul tabindex="0" class="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-auto">
