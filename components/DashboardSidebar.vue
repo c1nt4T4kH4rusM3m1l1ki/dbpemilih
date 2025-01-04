@@ -32,6 +32,12 @@
             </li>
           </ul>
         </li>
+        <li>
+          <NuxtLink to="/panduan" class="sidebar-link" @click="tutupKegiatan">
+            <Icon name="prime:github" class="h-5 w-5" />
+            Panduan
+          </NuxtLink>
+        </li>
       </ul>
     </aside>
   </div>

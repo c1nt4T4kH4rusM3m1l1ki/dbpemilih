@@ -3,6 +3,7 @@
 <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
   <div class="sm:mx-auto sm:w-full sm:max-w-sm">
     <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">Sign in to application</h2>
+    <p v-if="error"> helo {{ error }}</p>
   </div>
 
   <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -70,8 +71,10 @@ const error = ref('')
 const handleLogin = async () => {
   try {
     await login(username.value, password.value)
+    
   } catch (err) {
     error.value = 'Login gagal. Silakan coba lagi.'
+    console.log(err.value)
   }
 }
 
