@@ -28,7 +28,7 @@
       </div>
 
       <div>
-        <button @click.prevent="logoutSistem" type="submit" class="flex w-full justify-center rounded-md bg-emerald-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-emerald-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600">Sign in</button>
+        <button @click.prevent="handleLogin" type="submit" class="flex w-full justify-center rounded-md bg-emerald-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-emerald-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600">Sign in</button>
       </div>
     </form>
 
@@ -42,7 +42,7 @@
 definePageMeta({
   title: 'Login',
   layout: 'login',
-  middleware:['loginauth'],
+  middleware: 'guest',
   meta: [
     {
       name: 'description',
@@ -53,6 +53,7 @@ definePageMeta({
 
 // melihat password
 import { ref } from 'vue'
+import { useAuth } from '~/composables/useAuth'
 
 // Password visibility
 const passwordFieldType = ref('password')
@@ -61,17 +62,16 @@ const togglePasswordVisibility = () => {
 }
 
 //logika logout
+const { login } = useAuth()
 const username = ref('')
 const password = ref('')
-const rute = useRouter()
-const {isAuthenticated} =useAuth()
+const error = ref('')
 
-const logoutSistem = ()=>{
-  if(username.value=="admin" && password.value=="spenuh2025"){
-    isAuthenticated.value=true;
-    rute.push("/")
-  }else{
-    alert('password atau username salah')
+const handleLogin = async () => {
+  try {
+    await login(username.value, password.value)
+  } catch (err) {
+    error.value = 'Login gagal. Silakan coba lagi.'
   }
 }
 

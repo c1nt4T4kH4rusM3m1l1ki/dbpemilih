@@ -20,7 +20,7 @@
           </div>
         </label>
         <ul tabindex="0" class="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-auto">
-          <NuxtLink to="/login" @click="handlerLogout">LogOut</NuxtLink>
+          <NuxtLink to="/login" @click="handleLogout">LogOut</NuxtLink>
         </ul>
       </div>
     </div>
@@ -28,13 +28,17 @@
 </template>
 
 <script setup>
+import { useAuth } from '~/composables/useAuth'
 
-// logout sistem
-const {isAuthenticated, logout}= useAuth()
+const { user, logout } = useAuth()
 
-const handlerLogout = ()=>{
-  isAuthenticated.value=false
-  logout()
+const handleLogout = async () => {
+  try {
+    await logout()
+  } catch (err) {
+    console.error('Logout gagal:', err)
+    // Tambahkan logika tambahan jika diperlukan, seperti menampilkan pesan kesalahan
+  }
 }
 
 </script>
