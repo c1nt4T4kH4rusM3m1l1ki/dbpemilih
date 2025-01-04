@@ -152,6 +152,3 @@ Proyek ini dilisensikan di bawah Lisensi MIT - lihat file [LICENSE.md](LICENSE.m
 ## 💬 Dukungan
 
 Untuk dukungan, silakan buka issue di repositori GitHub atau hubungi pengelola.
-```
-
-Dokumentasi ini sudah diformat dengan baik untuk GitHub, menggunakan emoji untuk meningkatkan keterbacaan, dan mencakup semua informasi penting yang diperlukan untuk memahami dan menggunakan sistem autentikasi. Apakah Anda ingin saya memodifikasi bagian tertentu atau menambahkan informasi lainnya?
