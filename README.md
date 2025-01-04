@@ -1,16 +1,3 @@
-# Thinking
-
-
-# Thinking
-
-
-# Responding
-
-
-
-Saya akan membantu mengubah dokumentasi tersebut menjadi format README.md yang lebih ringkas dan cocok untuk GitHub. Berikut adalah versinya dalam Bahasa Indonesia:
-
-```markdown
 # Sistem Autentikasi Nuxt 3
 
 Implementasi sistem autentikasi sederhana menggunakan Nuxt 3, dengan fitur login/logout, manajemen sesi, dan penanganan error.
