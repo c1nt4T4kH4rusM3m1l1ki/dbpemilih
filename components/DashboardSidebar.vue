@@ -3,13 +3,13 @@
     <label for="dashboard-drawer" class="drawer-overlay"></label>
     <aside class="bg-base-100 w-70 min-h-screen border-r" >
       <div class="p-4">
-        <h1 class="text-2xl font-bold">Admin Dashboard</h1>
+        <h1 class="text-2xl font-bold">Database Pemilih</h1>
       </div>
       <ul class="menu p-4 gap-2">
         <li>
           <NuxtLink to="/" class="sidebar-link"@click="tutupKegiatan">
-            <Icon name="line-md:home-twotone" class="h-5 w-5" />
-            Dashboard
+            <Icon name="line-md:cloud-alt-braces" class="h-5 w-5" />
+            Database
           </NuxtLink>
         </li>
         <li>
