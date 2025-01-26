@@ -1,5 +1,6 @@
 <template>
-     <table class="table">
+  <div>
+    <table class="table">
         <thead class="text-base">
             <th>Nik</th>
             <th>Nama</th>
@@ -13,14 +14,14 @@
         </thead>
         <tbody>
             <tr v-for="item in tableData" :key="item.Nik">
-              <td>{{ item.Nik }}</td>
-              <td>{{ item.Nama }}</td>
-              <td>{{ item.TPS }}</td>
-              <td>{{ item.Umur }}</td>
-              <td>{{ item.JenisKelamin }}</td>
-              <td>{{ item.Kecamatan }}</td>
-              <td>{{ item.Desa }}</td>
-              <td>{{ item.JenisPemilih }}</td>
+              <td>{{ item.nik }}</td>
+              <td>{{ item.nama }}</td>
+              <td>{{ item.tps }}</td>
+              <td>{{ item.umur }}</td>
+              <td>{{ item.jenis_kelamin }}</td>
+              <td>{{ item.kecamatan }}</td>
+              <td>{{ item.desa }}</td>
+              <td>{{ item.jenis_pemilih }}</td>
               <td>
                 <Icon name="line-md:edit-full-twotone" class="text-blue-500 cursor-pointer hover:text-red-700" />
                 <Icon name="material-symbols:delete-outline" class="text-blue-500 cursor-pointer hover:text-red-700 ml-3" />
@@ -28,13 +29,22 @@
             </tr>
         </tbody>
       </table>
+  </div>
 </template>
 
 <script setup>
-const { data: pemilih } = await useFetch('/api/datapemilih')
+import { computed } from 'vue'
+import { Icon } from '@iconify/vue'
+
+const props = defineProps({
+  data: {
+    type: Object,
+    required: true
+  }
+})
 
 const tableData = computed(() => {
-  return pemilih.value || []
+  return props.data || []
 })
 </script>
 
