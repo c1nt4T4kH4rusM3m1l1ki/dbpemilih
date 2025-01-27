@@ -2,21 +2,19 @@
   <div>
     <div class="mb-1">
       <div class="form-control">
-        
-          <input 
-            type="text" 
-            v-model="searchQuery"
-            placeholder="Cari berdasarkan nama..." 
-            class="input input-bordered input-sm w-full max-w-xs"
-          />
-        
+        <input
+          type="text"
+          v-model="searchQuery"
+          placeholder="Cari berdasarkan nama..."
+          class="input input-bordered input-sm w-full max-w-xs bg-base-200"
+        />
       </div>
     </div>
     <div v-if="alertInfo" :class="`alert alert-${alertInfo.type}`">
       <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
       <span>{{ alertInfo.message }}</span>
     </div>
-    <table class="table">
+    <table class="table w-full bg-base-200">
         <thead class="text-base">
             <th>Nik</th>
             <th>Nama</th>
@@ -29,7 +27,7 @@
             <th>Aksi</th>
         </thead>
         <tbody>
-            <tr v-for="item in tableData" :key="item.Nik">
+            <tr v-for="item in displayData" :key="item.nik">
               <td>{{ item.nik }}</td>
               <td>{{ item.nama }}</td>
               <td>{{ item.tps }}</td>
@@ -53,15 +51,22 @@
             </tr>
         </tbody>
       </table>
+    <div class="join mt-4 flex justify-center">
+      <button @click="prevPage" :disabled="currentPage === 1" class="btn btn-sm btn-outline join-item">Previous</button>
+      <span class="join-item px-4 flex items-center">
+        Page {{ currentPage }} of {{ totalPages }}
+      </span>
+      <button @click="nextPage" :disabled="currentPage === totalPages" class="btn btn-sm btn-outline join-item">Next</button>
+    </div>
   </div>
-  <EditPemilih 
-    ref="editModal" 
-    @refresh-data="$emit('refresh-data')" 
+  <EditPemilih
+    ref="editModal"
+    @refresh-data="$emit('refresh-data')"
   />
 </template>
 
 <script setup>
-import { computed, defineEmits, ref } from 'vue'
+import { computed, defineEmits, ref, onMounted, watch } from 'vue'
 import EditPemilih from './modal/EditPemilih.vue'
 
 const emit = defineEmits(['refresh-data'])
@@ -110,42 +115,66 @@ const props = defineProps({
 })
 
 const searchQuery = ref('')
+const currentPage = ref(1)
+const itemsPerPage = 15
+const totalPages = ref(0)
 
-const tableData = computed(() => {
-  const data = props.data || []
-  if (!searchQuery.value) return data
-  
-  return data.filter(item => 
-    item.nama.toLowerCase().includes(searchQuery.value.toLowerCase())
+const fetchData = async () => {
+  const response = await fetch(
+    `/api/voters?page=${currentPage.value}&limit=${itemsPerPage}&search=${searchQuery.value}`
   )
-})
+  const result = await response.json()
+  tableData.value = result.data
+  totalPages.value = result.pagination.totalPages
+}
+
+// Gunakan watch untuk memantau perubahan searchQuery
+watch(searchQuery, () => {
+  currentPage.value = 1 // Reset ke halaman pertama saat pencarian
+  fetchData()
+}, { debounce: 300 }) // Tambahkan debounce untuk mengurangi request
+
+const tableData = ref([])
 
 const editModal = ref(null)
 
 const handleEdit = (item) => {
   editModal.value?.openModal(item)
 }
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++
+    fetchData()
+  }
+}
+
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--
+    fetchData()
+  }
+}
+
+// Hapus computed filteredTableData karena filtering sudah di server
+const displayData = computed(() => tableData.value || [])
+
+onMounted(() => {
+  fetchData()
+})
 </script>
 
 <style scoped>
 .table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
+  @apply bg-base-200;
 }
 
 th {
-  background-color: #f5f5f5;
-  font-weight: 600;
+  @apply bg-base-300;
 }
 
 tr:hover {
-  background-color: #f9f9f9;
+  @apply bg-base-300;
 }
 
 .input-group {
