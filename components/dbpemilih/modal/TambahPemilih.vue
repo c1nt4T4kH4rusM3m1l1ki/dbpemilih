@@ -92,7 +92,7 @@ const submitForm = async () => {
         desa: '',
         jenis_pemilih: ''
       }
-      open.value = false
+      
       
       // Emit event untuk memperbarui data
       emit('refresh-data')
@@ -153,7 +153,7 @@ const handleClose = () => {
   </button>
 
   <div v-if="open" class="fixed bottom-1 left-50 right-3 z-[999] flex items-center justify-center">
-    <div class="bg-orange-950 rounded-lg shadow-xl p-6 w-[1100px] max-h-[90vh] overflow-y-auto">
+    <div class="bg-emerald-200 border border-spacing-1 border-success rounded-lg shadow-xl p-6 w-[1100px] max-h-[90vh] overflow-y-auto">
       <form @submit.prevent="submitForm" class="space-y-6">
         <div class="flex flex-wrap gap-4 px-4">
           <!-- Input NIK -->
@@ -162,7 +162,7 @@ const handleClose = () => {
               v-model="formData.nik"
               type="text" 
               placeholder="Masukkan NIK" 
-              class="input input-bordered w-full" 
+              class="input input-bordered input-success w-full" 
             />
           </div>
 
@@ -172,13 +172,13 @@ const handleClose = () => {
               v-model="formData.nama"
               type="text" 
               placeholder="Masukkan Nama" 
-              class="input input-bordered w-full" 
+              class="input input-bordered input-success w-full" 
             />
           </div>
 
           <!-- Input TPS -->
           <div class="form-control w-32">
-            <select v-model="formData.tps" class="select select-bordered w-full">
+            <select v-model="formData.tps" class="select select-bordered select-success w-full">
               <option value="" disabled selected>Pilih TPS</option>
               <option value="1">1</option>
               <option value="2">2</option>
@@ -190,7 +190,7 @@ const handleClose = () => {
 
           <!-- Input Desa -->
           <div class="form-control flex-1 min-w-[200px]">
-            <select v-model="formData.desa" class="select select-bordered w-full">
+            <select v-model="formData.desa" class="select select-bordered select-success w-full">
               <option value="" disabled selected>Pilih Desa</option>
               <option v-for="desa in sortedDesas" :key="desa.id" :value="desa.nama_desa">
                 {{ desa.nama_desa }}
@@ -200,7 +200,7 @@ const handleClose = () => {
 
           <!-- Input Jenis Pemilih -->
           <div class="form-control w-48">
-            <select v-model="formData.jenis_pemilih" class="select select-bordered w-full">
+            <select v-model="formData.jenis_pemilih" class="select select-bordered select-success w-full">
               <option value="" disabled selected>Jenis Pemilih</option>
               <option value="Keluarga">Keluarga</option>
               <option value="Umum">Umum</option>

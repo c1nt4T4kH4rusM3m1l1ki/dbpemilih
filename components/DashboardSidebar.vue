@@ -8,8 +8,14 @@
       <ul class="menu p-4 gap-2">
         <li>
           <NuxtLink to="/" class="sidebar-link"@click="tutupKegiatan">
-            <Icon name="line-md:cloud-alt-braces" class="h-5 w-5" />
-            Database
+            <Icon name="line-md:home-md-twotone" class="h-5 w-5" />
+            Home
+          </NuxtLink>
+        </li>
+        <li>
+          <NuxtLink to="/dbpemilih" class="sidebar-link" @click="tutupKegiatan">
+            <Icon name="line-md:file-document-plus-twotone" class="h-5 w-5" />
+            Input Pemilih
           </NuxtLink>
         </li>
         <li>

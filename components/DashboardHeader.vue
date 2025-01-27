@@ -13,17 +13,20 @@
       </div>
     </div>
     <div class="flex-none gap-2">
-      <div class="dropdown dropdown-end">
-        <label tabindex="0" class="btn btn-ghost btn-circle avatar">
           <div class="w-10 rounded-full">
-            <Icon name="ic:round-log-out" class="text-red-500 font-bold text-2xl m-2" />
+            <Icon @click="openModal" name="heroicons:arrow-right-on-rectangle" class="text-red-500 cursor-pointer font-bold text-2xl m-2 hover:text-blue-600" />
           </div>
-        </label>
-        <ul tabindex="0" class="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-auto">
-          <NuxtLink to="/login" @click="handleLogout">LogOut</NuxtLink>
-        </ul>
-      </div>
     </div>
+    <dialog id="logout_modal" class="modal">
+      <div class="modal-box">
+        <h3 class="font-bold text-lg">Perhatian</h3>
+        <p class="py-4">Apakah Anda yakin ingin keluar?</p>
+        <div class="modal-action">
+          <button class="btn btn-sm btn-ghost" @click="closeModal">Tidak</button>
+          <button class="btn btn-sm btn-primary" @click="handleLogout">Ya</button>
+        </div>
+      </div>
+    </dialog>
   </header>
 </template>
 
@@ -35,10 +38,18 @@ const { user, logout } = useAuth()
 const handleLogout = async () => {
   try {
     await logout()
+    closeModal()
   } catch (err) {
     console.error('Logout gagal:', err)
     // Tambahkan logika tambahan jika diperlukan, seperti menampilkan pesan kesalahan
   }
 }
 
+const openModal = () => {
+  document.getElementById('logout_modal').showModal()
+}
+
+const closeModal = () => {
+  document.getElementById('logout_modal').close()
+}
 </script>
