@@ -1,11 +1,11 @@
 <template>
   <div>
-    <h2 class="text-center mb-5 font-bold">DATABASE PEMILIH</h2>
+    <h2 class="text-center mb-5 font-bold text-2xl">DATABASE PEMILIH</h2>
   </div>
   <div class="flex justify-end mr-5 mb-1">
     <DbpemilihModalTambahPemilih @refresh-data="refreshData"/>
   </div>
-  <div class="mb-96">
+  <div class="mb-10">
     <DbpemilihTableDatabase 
       :data="pemilih" 
       @refresh-data="refreshData"

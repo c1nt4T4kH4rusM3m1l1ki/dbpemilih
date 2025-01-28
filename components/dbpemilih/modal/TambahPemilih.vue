@@ -1,6 +1,7 @@
 <script setup>
-import { ref, defineEmits } from 'vue'
+import { ref, defineEmits, nextTick } from 'vue'
 import { NikParser } from '../../utils/nikParser.js'
+import { useVoters } from '~/composables/useVoters'
 
 const emit = defineEmits(['refresh-data'])
 const open = ref(false)
@@ -20,6 +21,8 @@ const formData = ref({
 
 // data desa
 const {data:desas} = await useFetch('/api/desa')
+
+const { fetchVoters } = useVoters()
 
 const showAlert = (type, message) => {
   alertInfo.value = {
@@ -72,18 +75,17 @@ const submitForm = async () => {
     }
 
     // Kirim data ke API
-    const { data: result } = await useFetch('/api/insertVoters', {
+    const response = await fetch('/api/insertVoters', {
       method: 'POST',
-      body: voterData
+      body: JSON.stringify(voterData),
+      headers: {
+        'Content-Type': 'application/json'
+      }
     })
 
-    if (!result.value.success) {
-      throw new Error(result.value.message)
-    }
-
-    if (result.value.success) {
+    if (response.ok) {
       showAlert('success', 'Data berhasil disimpan!')
-      // Reset form dan tutup modal
+      // Reset form
       formData.value = {
         nik: '',
         nama: '',
@@ -93,13 +95,14 @@ const submitForm = async () => {
         jenis_pemilih: ''
       }
       
-      
-      // Emit event untuk memperbarui data
-      emit('refresh-data')
+      // Refresh data langsung dari database
+      const freshData = await fetch('/api/dashboard/voters')
+      const voters = await freshData.json()
+      // Update state dengan data terbaru
+      useVoters().voters.value = voters
     }
   } catch (error) {
     showAlert('error', error.message)
-    console.error('Error submitting form:', error)
   }
 }
 

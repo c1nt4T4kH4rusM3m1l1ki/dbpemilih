@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { useVoters } from '~/composables/useVoters'
 
 const open = ref(false)
 const alertInfo = ref(null)
@@ -56,6 +57,8 @@ const openModal = (voter) => {
   open.value = true
 }
 
+const { fetchVoters } = useVoters()
+
 const submitForm = async () => {
   try {
     const { data: result } = await useFetch('/api/updateVoter', {
@@ -66,6 +69,9 @@ const submitForm = async () => {
     if (result.value?.success) {
       showAlert('success', 'Data berhasil diperbarui!')
       open.value = false
+      
+      // Refresh data langsung
+      await fetchVoters()
       emit('refresh-data')
     } else {
       throw new Error(result.value?.message || 'Gagal memperbarui data')

@@ -19,21 +19,15 @@
           </NuxtLink>
         </li>
         <li>
-          <NuxtLink to="/perencanaan" class="sidebar-link" @click="tutupKegiatan">
-            <Icon name="prime:book" class="h-5 w-5" />
-            Perencanaan
-          </NuxtLink>
-        </li>
-        <li>
-          <NuxtLink to="/kegiatan" class="sidebar-link" @click="toggleKegiatan">
+          <NuxtLink to="/data" class="sidebar-link" @click="toggleKegiatan">
             <Icon name="prime:list-check" class="h-5 w-5" />
-            Kegiatan
+            Data
           </NuxtLink>
           <ul v-if="kegiatan">
             <li>
-              <NuxtLink to="/kegiatan/ipkd" class="sidebar-link">
+              <NuxtLink to="/data/keluarga" class="sidebar-link">
                 <Icon name="prime:money-bill" class="h-5 w-5" />
-                IPKD
+                Keluarga
               </NuxtLink>
             </li>
           </ul>

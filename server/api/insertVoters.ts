@@ -31,8 +31,9 @@ export default defineEventHandler(async (event) => {
         const { nik, nama, tps, umur, jenis_kelamin, kecamatan, desa, jenis_pemilih } = body
 
         const result = await client.execute({
-            sql: "INSERT INTO voters (nik, nama, tps, umur, jenis_kelamin, kecamatan, desa, jenis_pemilih) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-            args: [nik, nama, tps, umur, jenis_kelamin, kecamatan, desa, jenis_pemilih]
+            sql: `INSERT INTO voters (nik, nama, tps, umur, jenis_kelamin, kecamatan, desa, jenis_pemilih)
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            args: [body.nik, body.nama, body.tps, body.umur, body.jenis_kelamin, body.kecamatan, body.desa, body.jenis_pemilih]
         })
 
         return {

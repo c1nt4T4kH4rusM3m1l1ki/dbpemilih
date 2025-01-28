@@ -8,10 +8,10 @@
       </div>
       <div class="stat bg-base-200 rounded-lg">
         <div class="stat-title">Pemilih Keluarga</div>
-        <div class="stat-value text-primary text-3xl md:text-4xl">{{ votersByType.Keluarga || 0 }}</div>
+        <div class="stat-value text-primary text-3xl md:text-4xl">{{ votersByType.keluarga || 0 }}</div>
       </div>
       <div class="stat bg-base-200 rounded-lg">
-        <div class="stat-title">Pemilih umum</div>
+        <div class="stat-title">Pemilih Umum</div>
         <div class="stat-value text-secondary text-3xl md:text-4xl">{{ votersByType.umum || 0 }}</div>
       </div>
     </div>
@@ -55,8 +55,7 @@
       </div>
     </div>
 
-    <!-- Tambahkan Tabel Rekapitulasi -->
-    <RekapitulasiTables />
+   
   </div>
 </template>
 
@@ -73,6 +72,7 @@ import {
   ArcElement
 } from 'chart.js'
 import RekapitulasiTables from './RekapitulasiTables.vue'
+import { ref, onMounted, onUnmounted, watchEffect, computed } from 'vue'
 
 ChartJS.register(
   CategoryScale,
@@ -84,18 +84,53 @@ ChartJS.register(
   ArcElement
 )
 
-// Gunakan endpoint khusus dashboard
-const { data: voters } = await useFetch('/api/dashboard/voters')
+const { data: voters, refresh: refreshVoters } = await useFetch('/api/dashboard/voters', {
+  server: false,
+  immediate: true
+})
 
-// Hitung total data
-const totalVoters = computed(() => voters.value?.length || 0)
+// Tambahkan watchEffect untuk memantau perubahan data
+watchEffect(async () => {
+  if (voters.value) {
+    // Recalculate semua computed properties
+    totalVoters.value
+    votersByType.value
+    votersByKecamatan.value
+    votersByDesa.value
+    barChartData.value
+    pieChartData.value
+    kecamatanChartData.value
+    desaChartData.value
+  }
+})
 
-// Hitung data berdasarkan jenis_pemilih
+// Tambahkan polling dengan interval lebih pendek
+const polling = ref(null)
+
+onMounted(() => {
+  polling.value = setInterval(async () => {
+    await refreshVoters()
+  }, 5000) // Update setiap 5 detik
+})
+
+onUnmounted(() => {
+  if (polling.value) {
+    clearInterval(polling.value)
+  }
+})
+
+// Hitung total data (tanpa console.log)
+const totalVoters = computed(() => {
+  return voters.value?.length || 0
+})
+
+// Hitung data berdasarkan jenis_pemilih (tanpa console.log)
 const votersByType = computed(() => {
-  if (!voters.value) return { Keluarga: 0, umum: 0 }
+  if (!voters.value) return { keluarga: 0, umum: 0 }
   
   return voters.value.reduce((acc, voter) => {
-    acc[voter.jenis_pemilih] = (acc[voter.jenis_pemilih] || 0) + 1
+    const type = voter.jenis_pemilih.toLowerCase()
+    acc[type] = (acc[type] || 0) + 1
     return acc
   }, {})
 })
@@ -119,7 +154,6 @@ const votersByDesa = computed(() => {
     return acc
   }, {})
 
-  // Sort dan ambil top 10 desa
   return Object.fromEntries(
     Object.entries(data)
       .sort(([,a], [,b]) => b - a)
@@ -129,11 +163,14 @@ const votersByDesa = computed(() => {
 
 // Data untuk Bar Chart
 const barChartData = computed(() => ({
-  labels: ['Keluarga', 'umum'],
+  labels: ['Keluarga', 'Umum'],
   datasets: [
     {
       label: 'Jumlah Pemilih',
-      data: [votersByType.value.Keluarga || 0, votersByType.value.umum || 0],
+      data: [
+        voters.value?.filter(v => v.jenis_pemilih.toLowerCase() === 'keluarga').length || 0,
+        voters.value?.filter(v => v.jenis_pemilih.toLowerCase() === 'umum').length || 0
+      ],
       backgroundColor: ['rgba(255, 99, 132, 0.8)', 'rgba(54, 162, 235, 0.8)'],
       borderColor: ['rgb(255, 99, 132)', 'rgb(54, 162, 235)'],
       borderWidth: 1
@@ -143,10 +180,13 @@ const barChartData = computed(() => ({
 
 // Data untuk Pie Chart
 const pieChartData = computed(() => ({
-  labels: ['Keluarga', 'umum'],
+  labels: ['Keluarga', 'Umum'],
   datasets: [
     {
-      data: [votersByType.value.Keluarga || 0, votersByType.value.umum || 0],
+      data: [
+        voters.value?.filter(v => v.jenis_pemilih.toLowerCase() === 'keluarga').length || 0,
+        voters.value?.filter(v => v.jenis_pemilih.toLowerCase() === 'umum').length || 0
+      ],
       backgroundColor: ['rgba(255, 99, 132, 0.8)', 'rgba(54, 162, 235, 0.8)'],
       borderColor: ['rgb(255, 99, 132)', 'rgb(54, 162, 235)'],
       borderWidth: 1
@@ -272,4 +312,18 @@ const chartOptions = {
     }
   }
 }
+
+// Tambahkan method refresh
+const refreshData = async () => {
+  await refreshVoters()
+  // Refresh RekapitulasiTables jika perlu
+  if (rekapTableRef.value) {
+    await rekapTableRef.value.refreshData()
+  }
+}
+
+// Expose method refresh
+defineExpose({
+  refreshData
+})
 </script>
