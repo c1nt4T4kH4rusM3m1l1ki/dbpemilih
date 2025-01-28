@@ -71,7 +71,7 @@ import {
   LinearScale,
   ArcElement
 } from 'chart.js'
-import RekapitulasiTables from './RekapitulasiTables.vue'
+
 import { ref, onMounted, onUnmounted, watchEffect, computed } from 'vue'
 
 ChartJS.register(
@@ -84,7 +84,7 @@ ChartJS.register(
   ArcElement
 )
 
-const { data: voters, refresh: refreshVoters } = await useFetch('/api/dashboard/voters', {
+const { data: voters, refresh: refreshVoters } = useFetch('/api/dashboard/voters', {
   server: false,
   immediate: true
 })
@@ -119,12 +119,12 @@ onUnmounted(() => {
   }
 })
 
-// Hitung total data (tanpa console.log)
+// Hitung total data
 const totalVoters = computed(() => {
   return voters.value?.length || 0
 })
 
-// Hitung data berdasarkan jenis_pemilih (tanpa console.log)
+// Hitung data berdasarkan jenis_pemilih
 const votersByType = computed(() => {
   if (!voters.value) return { keluarga: 0, umum: 0 }
   
