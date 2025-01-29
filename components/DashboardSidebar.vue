@@ -18,7 +18,7 @@
             Input Pemilih
           </NuxtLink>
         </li>
-        <li>
+        <li class="hidden md:block">
           <NuxtLink to="/data" class="sidebar-link" @click="toggleKegiatan">
             <Icon name="line-md:cloud-alt-braces" class="h-5 w-5" />
             Data
@@ -30,6 +30,24 @@
                 Keluarga
               </NuxtLink>
               <NuxtLink to="/data/umum" class="sidebar-link">
+                <Icon name="line-md:person-search" class="h-5 w-5" />
+                Umum
+              </NuxtLink>
+            </li>
+          </ul>
+        </li>
+        <li class="block md:hidden">
+          <NuxtLink to="/database" class="sidebar-link" @click="toggleKegiatan">
+            <Icon name="line-md:cloud-alt-braces" class="h-5 w-5" />
+            Database
+          </NuxtLink>
+          <ul v-if="kegiatan">
+            <li>
+              <NuxtLink to="/database/keluarga" class="sidebar-link">
+                <Icon name="line-md:person-search" class="h-5 w-5" />
+                Keluarga
+              </NuxtLink>
+              <NuxtLink to="/database/umum" class="sidebar-link">
                 <Icon name="line-md:person-search" class="h-5 w-5" />
                 Umum
               </NuxtLink>
