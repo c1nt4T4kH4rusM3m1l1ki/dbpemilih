@@ -2,11 +2,17 @@
 import { useAuth } from '~/composables/useAuth'
 import { navigateTo } from 'nuxt/app'
 
-export default defineNuxtRouteMiddleware(() => {
+export default defineNuxtRouteMiddleware((to) => {
   const { isAuthenticated } = useAuth()
+  
+  // Debugging
+  console.log('Guest middleware:', {
+    path: to.path,
+    isAuthenticated: isAuthenticated.value
+  })
 
-  if (isAuthenticated.value) {
-    // Jika pengguna sudah terautentikasi, arahkan ke halaman profil
+  // Jika sudah login dan mencoba akses halaman login
+  if (isAuthenticated.value && to.path === '/login') {
     return navigateTo('/')
   }
 })

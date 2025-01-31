@@ -1,18 +1,18 @@
 <template>
-  <div class="drawer-side">
+  <div class="drawer-side z-[100]">
     <label for="dashboard-drawer" class="drawer-overlay"></label>
-    <aside class="bg-base-100 w-70 min-h-screen border-r" >
+    <aside class="bg-base-100 w-[280px] min-h-screen border-r" >
       <div class="p-4">
         <h1 class="text-2xl font-bold">Database Pemilih</h1>
       </div>
       <ul class="menu p-4 gap-2">
         <li>
-          <NuxtLink to="/" class="sidebar-link"@click="tutupKegiatan">
+          <NuxtLink to="/" class="sidebar-link" @click="tutupKegiatan">
             <Icon name="line-md:home-md-twotone" class="h-5 w-5" />
             Home
           </NuxtLink>
         </li>
-        <li>
+        <li v-if="isAdmin">
           <NuxtLink to="/dbpemilih" class="sidebar-link" @click="tutupKegiatan">
             <Icon name="line-md:file-document-plus-twotone" class="h-5 w-5" />
             Input Pemilih
@@ -66,19 +66,44 @@
 </template>
 
 <script setup>
-// dropdown kegiatan
+import { ref, onMounted } from 'vue'
+import { useAuth } from '~/composables/useAuth'
+
+const { isAdmin } = useAuth()
 const kegiatan = ref(false)
+
+// Pastikan sidebar tetap terbuka di desktop
+onMounted(() => {
+  const drawer = document.getElementById('dashboard-drawer')
+  if (drawer && window.innerWidth >= 1024) {
+    drawer.checked = true
+  }
+})
+
 const toggleKegiatan = () => {
   kegiatan.value = !kegiatan.value
 }
 
-// matikan toggle kegiatan
-onMounted(() => {
-  kegiatan.value = false
-})
-
-// close dropdown ketika navigasi
 const tutupKegiatan = () => {
   kegiatan.value = false
+  // Tutup drawer di mobile
+  if (window.innerWidth < 1024) {
+    const drawer = document.getElementById('dashboard-drawer')
+    if (drawer) drawer.checked = false
+  }
 }
 </script>
+
+<style scoped>
+.drawer-side {
+  position: fixed;
+  height: 100vh;
+}
+
+@media (min-width: 1024px) {
+  .drawer-side {
+    position: fixed;
+    left: 0;
+  }
+}
+</style>

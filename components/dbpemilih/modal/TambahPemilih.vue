@@ -57,11 +57,6 @@ const submitForm = async () => {
       throw new Error('Desa tidak ditemukan')
     }
 
-    const { data: kecamatanData } = await useFetch(`/api/kecamatan/${selectedDesa.id_kecamatan}`)
-    if (!kecamatanData.value) {
-      throw new Error('Kecamatan tidak ditemukan')
-    }
-
     // Siapkan data untuk dikirim
     const voterData = {
       nik: formData.value.nik,
@@ -69,7 +64,7 @@ const submitForm = async () => {
       tps: formData.value.tps,
       umur: nikData.umur,
       jenis_kelamin: nikData.jenisKelamin,
-      kecamatan: kecamatanData.value.data.nama_kecamatan,
+      kecamatan: selectedDesa.nama_kecamatan,
       desa: formData.value.desa,
       jenis_pemilih: formData.value.jenis_pemilih
     }
@@ -100,6 +95,9 @@ const submitForm = async () => {
       const voters = await freshData.json()
       // Update state dengan data terbaru
       useVoters().voters.value = voters
+      
+      // Emit event untuk refresh data
+      emit('refresh-data')
     }
   } catch (error) {
     showAlert('error', error.message)
@@ -148,15 +146,13 @@ const handleClose = () => {
     </div>
   </div>
 
-  <button @click="open = true" class="flex items-center gap-2 group">
-    <div class="chat chat-end">
-        <span class="chat-bubble bg-slate-200 text-black cursor-pointer opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-200 ease-in-out text-sm w-40 font-bold">Tambah Pemilih</span>
-    </div>
-      <Icon name="line-md:account-add" class="text-blue-500 cursor-pointer hover:text-red-700"/>
+  <button @click="open = true" class="flex items-center gap-2 group badge bg-orange-700 text-white">
+      <Icon name="line-md:account-add" class="text-white cursor-pointer hover:text-red-700"/>
+      Tambah Pemilih
   </button>
 
   <div v-if="open" class="fixed bottom-1 left-50 right-3 z-[999] flex items-center justify-center">
-    <div class="bg-emerald-200 border border-spacing-1 border-success rounded-lg shadow-xl p-6 w-[1100px] max-h-[90vh] overflow-y-auto">
+    <div class="bg-orange-700 border border-spacing-1 border-orange-500 rounded-lg shadow-xl p-6 w-[1100px] max-h-[90vh] overflow-y-auto">
       <form @submit.prevent="submitForm" class="space-y-6">
         <div class="flex flex-wrap gap-4 px-4">
           <!-- Input NIK -->
@@ -165,7 +161,7 @@ const handleClose = () => {
               v-model="formData.nik"
               type="text" 
               placeholder="Masukkan NIK" 
-              class="input input-bordered input-success w-full" 
+              class="input input-bordered input-orange-500 w-full" 
             />
           </div>
 
@@ -175,13 +171,13 @@ const handleClose = () => {
               v-model="formData.nama"
               type="text" 
               placeholder="Masukkan Nama" 
-              class="input input-bordered input-success w-full" 
+              class="input input-bordered input-orange-500 w-full" 
             />
           </div>
 
           <!-- Input TPS -->
           <div class="form-control w-32">
-            <select v-model="formData.tps" class="select select-bordered select-success w-full">
+            <select v-model="formData.tps" class="select select-bordered select-orange-500 w-full">
               <option value="" disabled selected>Pilih TPS</option>
               <option value="1">1</option>
               <option value="2">2</option>
@@ -193,7 +189,7 @@ const handleClose = () => {
 
           <!-- Input Desa -->
           <div class="form-control flex-1 min-w-[200px]">
-            <select v-model="formData.desa" class="select select-bordered select-success w-full">
+            <select v-model="formData.desa" class="select select-bordered select-orange-500 w-full">
               <option value="" disabled selected>Pilih Desa</option>
               <option v-for="desa in sortedDesas" :key="desa.id" :value="desa.nama_desa">
                 {{ desa.nama_desa }}
@@ -203,7 +199,7 @@ const handleClose = () => {
 
           <!-- Input Jenis Pemilih -->
           <div class="form-control w-48">
-            <select v-model="formData.jenis_pemilih" class="select select-bordered select-success w-full">
+            <select v-model="formData.jenis_pemilih" class="select select-bordered select-orange-500 w-full">
               <option value="" disabled selected>Jenis Pemilih</option>
               <option value="Keluarga">Keluarga</option>
               <option value="Umum">Umum</option>
@@ -213,10 +209,10 @@ const handleClose = () => {
 
         <!-- Tombol Submit -->
         <div class="flex justify-end gap-2 mt-6">
-          <button @click="handleClose" type="button" class="btn btn-warning btn-sm">
+          <button @click="handleClose" type="button" class="btn btn-outline bg-white text-orange-500 btn-sm">
             Tutup
           </button>
-          <button type="submit" class="btn btn-primary btn-sm">
+          <button type="submit" class="btn btn-neutral btn-sm">
             Simpan
           </button>
         </div>

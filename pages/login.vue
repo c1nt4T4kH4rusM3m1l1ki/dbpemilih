@@ -1,83 +1,94 @@
 <template>
+  <div class="min-h-screen bg-base-200 flex items-center justify-center px-4">
+    <div class="max-w-md w-full bg-base-100 rounded-lg shadow-xl p-8">
+      <!-- Header -->
+      <div class="text-center mb-8">
+        <h1 class="text-2xl font-bold">Selamat Datang</h1>
+        <p class="text-sm text-gray-500 mt-2">Silakan login untuk melanjutkan</p>
+      </div>
 
-<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-  <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-    <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">Sign in to application</h2>
-    <p v-if="error"> helo {{ error }}</p>
+      <!-- Error Alert -->
+      <div v-if="error" class="alert alert-error mb-6 text-sm">
+        <Icon name="ph:warning-circle-fill" class="w-5 h-5"/>
+        <span>{{ error }}</span>
+      </div>
+
+      <!-- Login Form -->
+      <form @submit.prevent="handleLogin" class="space-y-6">
+        <!-- Username Input -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Username</span>
+          </label>
+          <input 
+            v-model="username" 
+            type="text" 
+            class="input input-bordered w-full" 
+            required
+          />
+        </div>
+
+        <!-- Password Input -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Password</span>
+          </label>
+          <div class="relative">
+            <input 
+              v-model="password" 
+              :type="passwordFieldType" 
+              class="input input-bordered w-full pr-10" 
+              required
+            />
+            <button 
+              type="button" 
+              @click="togglePasswordVisibility" 
+              class="absolute right-3 top-1/2 -translate-y-1/2"
+            >
+              <Icon 
+                :name="passwordFieldType === 'password' ? 'heroicons:eye-slash' : 'heroicons:eye'" 
+                class="w-5 h-5 text-gray-500"
+              />
+            </button>
+          </div>
+        </div>
+
+        <!-- Login Button -->
+        <button 
+          type="submit" 
+          class="btn btn-primary w-full"
+        >
+          Login
+        </button>
+      </form>
+    </div>
   </div>
-
-  <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-    <form class="space-y-6">
-      <div>
-        <label for="email" class="block text-sm/6 font-medium text-gray-900">Username</label>
-        <div class="mt-2">
-          <input v-model="username" type="text" name="username" required class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
-        </div>
-      </div>
-
-      <div>
-        <div class="flex items-center justify-between">
-          <label for="password" class="block text-sm/6 font-medium text-gray-900">Password</label>
-        </div>
-        <div class="mt-2 relative">
-          <input :type="passwordFieldType" name="password" v-model="password" autocomplete="current-password" required class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
-          <button type="button" @click="togglePasswordVisibility" class="absolute inset-y-0 right-0 flex items-center pr-3">
-            <Icon v-if="passwordFieldType=='password'" name="material-symbols-light:disabled-visible-rounded" class="w-5 h-5 text-gray-600" />
-            <Icon v-else name="material-symbols-light:eye-tracking" class="w-5 h-5 text-gray-600" />
-          </button>
-        </div>
-      </div>
-
-      <div>
-        <button @click.prevent="handleLogin" type="submit" class="flex w-full justify-center rounded-md bg-emerald-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-emerald-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600">Sign in</button>
-      </div>
-    </form>
-
-    
-  </div>
-</div>
-
 </template>
 
 <script setup>
 definePageMeta({
-  title: 'Login',
   layout: 'login',
-  middleware: 'guest',
-  meta: [
-    {
-      name: 'description',
-      content: 'Login to your account'
-    }
-  ]
+  middleware: 'guest'
 })
 
-// melihat password
-import { ref } from 'vue'
-import { useAuth } from '~/composables/useAuth'
-
-// Password visibility
-const passwordFieldType = ref('password')
-const togglePasswordVisibility = () => {
-  passwordFieldType.value = passwordFieldType.value === 'password' ? 'text' : 'password'
-}
-
-//logika logout
 const { login } = useAuth()
 const username = ref('')
 const password = ref('')
 const error = ref('')
+const passwordFieldType = ref('password')
+
+const togglePasswordVisibility = () => {
+  passwordFieldType.value = passwordFieldType.value === 'password' ? 'text' : 'password'
+}
 
 const handleLogin = async () => {
   try {
+    error.value = ''
     await login(username.value, password.value)
-    
   } catch (err) {
-    error.value = 'Login gagal. Silakan coba lagi.'
-    console.log(err.value)
+    error.value = err.message
   }
 }
-
 </script>
 
 

@@ -18,6 +18,12 @@ export default defineEventHandler(async (e) => {
             queryParams.push(`%${search}%`);
         }
 
+        if (query.jenis_pemilih) {
+            sql += sql.includes('WHERE') ? ' AND' : ' WHERE';
+            sql += ' jenis_pemilih = ?';
+            queryParams.push(query.jenis_pemilih);
+        }
+
         // Get total count first
         const countResult = await client.execute({
             sql: countSql,

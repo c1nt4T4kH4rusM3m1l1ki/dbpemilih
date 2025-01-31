@@ -1,97 +1,74 @@
 // composables/useAuth.ts
-import { useCookie } from '#app'
 import { navigateTo } from 'nuxt/app'
-
-interface User {
-  name: string
-}
-
-interface LoginResponse {
-  success: boolean
-  message?: string
-  user?: User
-}
-
-interface LogoutResponse {
-  success: boolean
-}
+import { computed } from 'vue'
+import type { LoginResponse } from '~/types/auth'
 
 export const useAuth = () => {
-  // Mendefinisikan cookie dengan tipe boolean dan default sebagai fungsi
-  const isAuthenticatedCookie = useCookie<boolean>('isAuthenticated', {
-    default: () => false,
-  })
+  const isAuthenticated = useState<boolean>('auth', () => false)
+  const userRole = useState<string>('role', () => '')
 
-  // Mendefinisikan state dengan tipe boolean
-  const isAuthenticated = useState<boolean>('auth', () => isAuthenticatedCookie.value)
-
-  // Mendefinisikan cookie dengan tipe string dan default sebagai fungsi
-  const userCookie = useCookie<string>('user', {
-    default: () => '',
-  })
-
-  const user = useState<User | null>('user', () => {
-    try {
-      return userCookie.value ? JSON.parse(userCookie.value) : null
-    } catch (e) {
-      console.error('Error parsing user cookie:', e)
-      return null
+  onMounted(() => {
+    const savedAuth = localStorage.getItem('auth')
+    const savedRole = localStorage.getItem('role')
+    
+    if (savedAuth) {
+      isAuthenticated.value = JSON.parse(savedAuth)
+      userRole.value = savedRole || ''
+    } else {
+      navigateTo('/login')
     }
   })
 
   const login = async (username: string, password: string) => {
     try {
-      // Menentukan tipe generik untuk $fetch
-      const response = await $fetch<LoginResponse>('/api/login', {
+      const adminResponse = await $fetch<LoginResponse>('/api/login/admin', {
         method: 'POST',
-        body: { username, password },
+        body: { username, password }
       })
 
-      if (response.success) {
+      if (adminResponse.success) {
         isAuthenticated.value = true
-        isAuthenticatedCookie.value = true
-
-        if (response.user) {
-          user.value = response.user
-          userCookie.value = JSON.stringify(response.user)
-        }
-
-        navigateTo('/')
-      } else {
-        throw new Error(response.message || 'Login gagal')
+        userRole.value = 'admin'
+        localStorage.setItem('auth', 'true')
+        localStorage.setItem('role', 'admin')
+        return navigateTo('/')
       }
-    } catch (error) {
-      console.error('Login gagal:', error)
-      // Tangani kesalahan (misalnya, tampilkan pesan ke pengguna)
-    }
-  }
 
-  const logout = async () => {
-    try {
-      // Menentukan tipe generik untuk $fetch
-      const response = await $fetch<LogoutResponse>('/api/logout', {
+      const userResponse = await $fetch<LoginResponse>('/api/login/user', {
         method: 'POST',
+        body: { username, password }
       })
 
-      if (response.success) {
-        isAuthenticated.value = false
-        isAuthenticatedCookie.value = false
-
-        user.value = null
-        userCookie.value = ''
-
-        navigateTo('/login')
+      if (userResponse.success) {
+        isAuthenticated.value = true
+        userRole.value = 'user'
+        localStorage.setItem('auth', 'true')
+        localStorage.setItem('role', 'user')
+        return navigateTo('/')
       }
+
+      throw new Error('Username atau password salah')
     } catch (error) {
-      console.error('Logout gagal:', error)
-      // Tangani kesalahan
+      console.error('Login error:', error)
+      throw error
     }
   }
+
+  const logout = () => {
+    isAuthenticated.value = false
+    userRole.value = ''
+    localStorage.removeItem('auth')
+    localStorage.removeItem('role')
+    return navigateTo('/login')
+  }
+
+  const isAdmin = computed(() => userRole.value === 'admin')
 
   return {
     isAuthenticated,
-    user,
+    userRole,
     login,
     logout,
+    isAdmin
   }
 }
